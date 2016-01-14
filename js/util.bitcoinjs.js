@@ -27,6 +27,7 @@ CWHierarchicalKey.prototype.init = function(passphrase) {
   }
 
   var seed = this.wordsToSeed(words);   
+//  this.HierarchicalKey = this.useOldHierarchicalKey ? this.oldHierarchicalKeyFromSeed(seed) : bitcoin.HDNode.fromSeedHex(seed, bitcoin.networks.testnet);
   this.HierarchicalKey = this.useOldHierarchicalKey ? this.oldHierarchicalKeyFromSeed(seed) : bitcore.HierarchicalKey.seed(seed, NETWORK.name);
   // this instance used for sweeping old wallet
   this.oldHierarchicalKey = this.oldHierarchicalKeyFromSeed(seed);
@@ -219,15 +220,12 @@ var CWBitcore =  {}
 
 CWBitcore.isValidAddress = function(val) {
   try {
-    var address = new bitcore.Address(val);
-    if (address.isValid()) {
-      return address.version() == NETWORK.addressVersion;
-    } else {
-      return false;
-    }     
-  } catch (err) {
-    return false;
-  }
+    decoded = bitcoin.address.fromBase58Check(val)
+      } catch (e) {
+
+        return false
+      }
+   return decoded.version == NETWORK.addressVersion;
 }
 
 CWBitcore.isValidMultisigAddress = function(val) {
